@@ -1,6 +1,9 @@
-<?php
-session_start();
+<?php session_start();
 $fullname = $_SESSION['username'];
+include 'connection.php';
+$fullname = $_SESSION['username'];
+$row = mysqli_query($connection, "SELECT * FROM testcentre_table ");
+
 ?>
 
 <!DOCTYPE html>
@@ -136,60 +139,50 @@ $fullname = $_SESSION['username'];
                 </nav>
                 <!-- End of Topbar -->
                 <!-- Begin Page Content -->
-                <div id="page-content-wrapper">
-                    <div class="container">
-                        <div class="card my-5 p-3">
-                            <div class="card-heading ">
-                                <!-- Button trigger modal -->
-                                <h2 class="card-title text-center"> Test Centre</h2>
-                            </div>
-                            <div class="card-body ">
-                                <div class="justify-content-center">
-                                    <div class="col-auto">
-                                        <div class="table-responsive">
+                <div class="container">
 
-                                            <?php
-                                            include "connection.php";
-                                            $query = mysqli_query($connection, "SELECT * from testcentre_table");
-
-                                            ?>
-                                            <table class="table table-hover justify-content-center mx-auto border">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Test Centre ID</th>
-                                                        <th>Test Centre Name</th>
-                                                        <th class="col-md-80"></th>
-                                                    </tr>
-                                                </thead>
-
-                                                <?php
-                                                while ($data = mysqli_fetch_assoc($query)) {
-                                                ?>
-
-                                                    <tbody>
-                                                        <tr>
-                                                            <th scope="row"><?php echo $data["id"]; ?></th>
-                                                            <td><?php echo $data["testcentre_name"]; ?></td>
-                                                            <td class="d-flex"><a href="tcm_edit_testcentre.php?id=<?= $data['id']; ?>" class="btn btn-sm btn-primary mr-1">Edit</a><a href="delete_data.php?id=<?= $data['id']; ?>&table=testcentre_table" class="btn btn-sm btn-danger">Delete</a></td>
-                                                        </tr>
-
-                                                    </tbody>
-                                                <?php
-                                                    $data++;
-                                                }
-                                                ?>
-
-                                            </table>
+                    <div class="card o-hidden border-0 shadow-lg my-5 col-lg-7 mx-auto">
+                        <div class="card-body p-0">
+                            <!-- Nested Row within Card Body -->
+                            <div class="row">
+                                <div class="col-lg">
+                                    <div class="p-5">
+                                        <div class="text-center">
+                                            <h1 class="h4 text-gray-900 mb-4">Add New Tester</h1>
+                                            <hr>
                                         </div>
-                                        <nav aria-label="...">
-                                            <div class="col text-center"><a href="tcm_add_testcentre.php" class="btn btn-primary mb-4 mx-7 ">Register Test Centre</a></div>
+                                        <form class="user" method="post" action="query_tester.php">
+                                            <div class="form-group">
+                                                <input type="text" class="form-control form-control-user" name="username" aria-describedby="username" placeholder="Username" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <input type="password" class="form-control form-control-user" name="password" placeholder="Password" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="form-group">
+                                                    <input type="text" pattern="[a-zA-Z]*" class="form-control form-control-user" name="tester_name" placeholder="Tester's Name" required>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="tcm_testercentre">Assign to</label>
+                                                <select class="form-control" id="exampleFormControlSelect1" name="testcentre_name">
+                                                    <?php foreach ($row as $r) : ?>
+                                                        <option value="<?= $r['testcentre_name']; ?>"><?= $r['testcentre_name']; ?></option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            </div>
 
-                                        </nav>
+                                            <hr>
+                                            <button type="submit" class="btn btn-primary btn-user btn-block">
+                                                Record Tester
+                                            </button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
                 <!-- End of Main Content -->
                 <!-- Footer -->

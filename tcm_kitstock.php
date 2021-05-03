@@ -141,36 +141,37 @@ $fullname = $_SESSION['username'];
                         <div class="card my-5 p-3">
                             <div class="card-heading ">
                                 <!-- Button trigger modal -->
-                                <h2 class="card-title text-center"> Test Centre</h2>
+                                <h2 class="card-title text-center"> List of Test Kit</h2>
                             </div>
                             <div class="card-body ">
                                 <div class="justify-content-center">
                                     <div class="col-auto">
                                         <div class="table-responsive">
-
                                             <?php
                                             include "connection.php";
-                                            $query = mysqli_query($connection, "SELECT * from testcentre_table");
+                                            $query = mysqli_query($connection, "SELECT * from testkit_table");
 
                                             ?>
                                             <table class="table table-hover justify-content-center mx-auto border">
                                                 <thead>
                                                     <tr>
-                                                        <th>Test Centre ID</th>
-                                                        <th>Test Centre Name</th>
-                                                        <th class="col-md-80"></th>
+                                                        <th>Test Kit ID</th>
+                                                        <th>Test Kit Name</th>
+                                                        <th>Stock Availibility</th>
+                                                        <th>Owned By</th>
+                                                        <th></th>
                                                     </tr>
                                                 </thead>
-
                                                 <?php
                                                 while ($data = mysqli_fetch_assoc($query)) {
                                                 ?>
-
                                                     <tbody>
                                                         <tr>
                                                             <th scope="row"><?php echo $data["id"]; ?></th>
+                                                            <td><?php echo $data["testkit_name"]; ?></td>
+                                                            <td><?php echo $data["testkit_stock"]; ?></td>
                                                             <td><?php echo $data["testcentre_name"]; ?></td>
-                                                            <td class="d-flex"><a href="tcm_edit_testcentre.php?id=<?= $data['id']; ?>" class="btn btn-sm btn-primary mr-1">Edit</a><a href="delete_data.php?id=<?= $data['id']; ?>&table=testcentre_table" class="btn btn-sm btn-danger">Delete</a></td>
+                                                            <td class="d-flex"><a href="tcm_update_testkit.php?id=<?= $data['id']; ?>" class="btn btn-sm btn-primary mr-1">Update</a><a href="delete_data.php?id=<?= $data['id']; ?>&table=testkit_table" class="btn btn-sm btn-danger">Delete</a></td>
                                                         </tr>
 
                                                     </tbody>
@@ -178,11 +179,10 @@ $fullname = $_SESSION['username'];
                                                     $data++;
                                                 }
                                                 ?>
-
                                             </table>
                                         </div>
                                         <nav aria-label="...">
-                                            <div class="col text-center"><a href="tcm_add_testcentre.php" class="btn btn-primary mb-4 mx-7 ">Register Test Centre</a></div>
+                                            <div class="col text-center"><a href="tcm_add_testkit.php" class="btn btn-primary mb-4">Record New Test kit</a></div>
 
                                         </nav>
                                     </div>

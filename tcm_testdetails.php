@@ -1,6 +1,16 @@
 <?php
 session_start();
+include 'connection.php';
 $fullname = $_SESSION['username'];
+if (!isset($_SESSION["username"])) {
+    echo "<script>alert('login first'); location.href='login.php'</script>";
+    exit();
+}
+if (isset($_GET['id'])) {
+    $id = $_GET['id'];
+    $query = mysqli_query($connection, "SELECT * FROM testreport_table WHERE id= $id");
+    $row = mysqli_fetch_assoc($query);
+}
 ?>
 
 <!DOCTYPE html>
@@ -45,7 +55,7 @@ $fullname = $_SESSION['username'];
 
             <!-- Heading -->
             <div class="sidebar-heading">
-                Test Centre Manager
+                Test Center Manager
             </div>
 
             <!-- Nav Item - Dashboard -->
@@ -81,7 +91,6 @@ $fullname = $_SESSION['username'];
                     <i class="fas fa-fw fa-first-aid"></i>
                     <!-- Manage Kit Stock --><span>Test Kit Stock</span></a>
             </li>
-
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
 
@@ -141,49 +150,58 @@ $fullname = $_SESSION['username'];
                         <div class="card my-5 p-3">
                             <div class="card-heading ">
                                 <!-- Button trigger modal -->
-                                <h2 class="card-title text-center"> Test Centre</h2>
+                                <h2 class="card-title text-center">Test Report</h2>
                             </div>
                             <div class="card-body ">
                                 <div class="justify-content-center">
                                     <div class="col-auto">
-                                        <div class="table-responsive">
-
-                                            <?php
-                                            include "connection.php";
-                                            $query = mysqli_query($connection, "SELECT * from testcentre_table");
-
-                                            ?>
-                                            <table class="table table-hover justify-content-center mx-auto border">
+                                        <div class="table-responsive-md">
+                                            <table class="table table-striped table-bordered table-sm " cellspacing="0" width="100%">
                                                 <thead>
                                                     <tr>
-                                                        <th>Test Centre ID</th>
-                                                        <th>Test Centre Name</th>
-                                                        <th class="col-md-80"></th>
+                                                        <th>Test ID</th>
+                                                        <th>Patient Name</th>
+                                                        <th>Patient Type</th>
+                                                        <th>Symptoms</th>
+                                                        <th>Test Date</th>
+                                                        <th>Test Status</th>
+                                                        <th>Result Date</th>
+                                                        <th>Test Result</th>
+                                                        <th>Test Kit Name</th>
+                                                        <th>Done by</th>
                                                     </tr>
                                                 </thead>
-
                                                 <?php
-                                                while ($data = mysqli_fetch_assoc($query)) {
+                                                if (isset($_GET['id'])) {
+                                                    $id = $_GET['id'];
+                                                    $query = mysqli_query($connection, "SELECT * FROM testreport_table WHERE id= $id");
+                                                    while ($data = mysqli_fetch_assoc($query)) {
                                                 ?>
-
-                                                    <tbody>
-                                                        <tr>
-                                                            <th scope="row"><?php echo $data["id"]; ?></th>
-                                                            <td><?php echo $data["testcentre_name"]; ?></td>
-                                                            <td class="d-flex"><a href="tcm_edit_testcentre.php?id=<?= $data['id']; ?>" class="btn btn-sm btn-primary mr-1">Edit</a><a href="delete_data.php?id=<?= $data['id']; ?>&table=testcentre_table" class="btn btn-sm btn-danger">Delete</a></td>
-                                                        </tr>
-
-                                                    </tbody>
+                                                        <tbody>
+                                                            <tr>
+                                                                <th scope="row"><?php echo $data['id']; ?></th>
+                                                                <td><?php echo $data['fullname']; ?></td>
+                                                                <td><?php echo $data['patient_type']; ?></td>
+                                                                <td><?php echo $data['symptoms']; ?></td>
+                                                                <td><?php echo $data['test_date']; ?></td>
+                                                                <td><?php echo $data['test_status']; ?></td>
+                                                                <td><?php echo $data['result_date']; ?></td>
+                                                                <td><?php echo $data['test_result']; ?></td>
+                                                                <td><?php echo $data['testkit_name']; ?></td>
+                                                                <td><?php echo $data['testcentre_name']; ?></td>
+                                                            </tr>
+                                                        </tbody>
                                                 <?php
-                                                    $data++;
+                                                    }
                                                 }
                                                 ?>
 
                                             </table>
                                         </div>
                                         <nav aria-label="...">
-                                            <div class="col text-center"><a href="tcm_add_testcentre.php" class="btn btn-primary mb-4 mx-7 ">Register Test Centre</a></div>
-
+                                            <div class="col text-center">
+                                                <a href="tcm_dashboard.php" class="btn btn-outline-primary">Previous Page</a>
+                                            </div>
                                         </nav>
                                     </div>
                                 </div>

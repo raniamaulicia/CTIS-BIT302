@@ -1,5 +1,16 @@
 <?php
 session_start();
+if (!isset($_SESSION['username']) && !isset($_SESSION['password'])) {
+    header('Location:login.php');
+}
+
+if (isset($_SESSION['role_id'])) {
+    if ($_SESSION['role_id'] == "tcm") {
+        header('tcm_dashboard.php');
+    } else if ($_SESSION['role_id'] == "user") {
+        header('#');
+    }
+}
 $fullname = $_SESSION['username'];
 ?>
 
@@ -50,7 +61,7 @@ $fullname = $_SESSION['username'];
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item">
-                <a class="nav-link" href="tcm_dashboard.php">
+                <a class="nav-link" href="#">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
@@ -141,7 +152,7 @@ $fullname = $_SESSION['username'];
                         <div class="card my-5 p-3">
                             <div class="card-heading ">
                                 <!-- Button trigger modal -->
-                                <h2 class="card-title text-center"> Test Centre</h2>
+                                <h2 class="card-title text-center">Test Report</h2>
                             </div>
                             <div class="card-body ">
                                 <div class="justify-content-center">
@@ -150,41 +161,37 @@ $fullname = $_SESSION['username'];
 
                                             <?php
                                             include "connection.php";
-                                            $query = mysqli_query($connection, "SELECT * from testcentre_table");
+                                            $query = mysqli_query($connection, "SELECT * from testreport_table WHERE test_status = 'Complete'");
 
                                             ?>
                                             <table class="table table-hover justify-content-center mx-auto border">
                                                 <thead>
                                                     <tr>
-                                                        <th>Test Centre ID</th>
-                                                        <th>Test Centre Name</th>
-                                                        <th class="col-md-80"></th>
+                                                        <th>Test ID</th>
+                                                        <th>Patient Name</th>
+                                                        <th>Test Status</th>
+                                                        <th>Test Result</th>
+                                                        <th></th>
                                                     </tr>
                                                 </thead>
 
                                                 <?php
-                                                while ($data = mysqli_fetch_assoc($query)) {
+                                                foreach ($query as $data) :
                                                 ?>
-
                                                     <tbody>
                                                         <tr>
                                                             <th scope="row"><?php echo $data["id"]; ?></th>
-                                                            <td><?php echo $data["testcentre_name"]; ?></td>
-                                                            <td class="d-flex"><a href="tcm_edit_testcentre.php?id=<?= $data['id']; ?>" class="btn btn-sm btn-primary mr-1">Edit</a><a href="delete_data.php?id=<?= $data['id']; ?>&table=testcentre_table" class="btn btn-sm btn-danger">Delete</a></td>
+                                                            <td><?php echo $data["fullname"]; ?></td>
+                                                            <td><?php echo $data["test_status"]; ?></td>
+                                                            <td><?php echo $data["test_result"]; ?></td>
+                                                            <td class="d-flex"><a href="tcm_testdetails.php?id=<?= $data['id']; ?>" class="btn btn-sm btn-primary mr-1">See Details</a>
                                                         </tr>
-
                                                     </tbody>
                                                 <?php
-                                                    $data++;
-                                                }
+                                                endforeach;
                                                 ?>
-
                                             </table>
                                         </div>
-                                        <nav aria-label="...">
-                                            <div class="col text-center"><a href="tcm_add_testcentre.php" class="btn btn-primary mb-4 mx-7 ">Register Test Centre</a></div>
-
-                                        </nav>
                                     </div>
                                 </div>
                             </div>

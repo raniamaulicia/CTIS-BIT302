@@ -1,8 +1,10 @@
-<?php
-session_start();
+<?php session_start();
+include 'connection.php';
 $fullname = $_SESSION['username'];
+$row = mysqli_query($connection, "SELECT * FROM user_table where role_id='patient'");
+$row1 = mysqli_query($connection, "SELECT * FROM testcentre_table");
+$row2 = mysqli_query($connection, "SELECT * FROM testkit_table");
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -21,7 +23,7 @@ $fullname = $_SESSION['username'];
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 
     <!-- Custom styles for this template-->
-    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="css/tester.css" rel="stylesheet">
 
 </head>
 
@@ -45,12 +47,12 @@ $fullname = $_SESSION['username'];
 
             <!-- Heading -->
             <div class="sidebar-heading">
-                Test Centre Manager
+                Tester
             </div>
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item">
-                <a class="nav-link" href="tcm_dashboard.php">
+                <a class="nav-link" href="tester_dashboard.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
@@ -65,21 +67,9 @@ $fullname = $_SESSION['username'];
 
             <!-- Nav Item - Menu -->
             <li class="nav-item">
-                <a class="nav-link" href="tcm_testcentre.php">
+                <a class="nav-link" href="tester_recordtest.php">
                     <i class="far fa-fw fa-hospital"></i>
-                    <!-- REGISTER TEST CENTRE --><span>Register Test Centre</span></a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="tcm_tester.php">
-                    <i class="fas fa-fw fa-user-nurse"></i>
-                    <!-- RECORD TESTER --><span>Add New Tester</span></a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="tcm_kitstock.php">
-                    <i class="fas fa-fw fa-first-aid"></i>
-                    <!-- Manage Kit Stock --><span>Test Kit Stock</span></a>
+                    <!-- REGISTER TEST CENTRE --><span>Perform Testing</span></a>
             </li>
 
             <!-- Divider -->
@@ -136,61 +126,72 @@ $fullname = $_SESSION['username'];
                 </nav>
                 <!-- End of Topbar -->
                 <!-- Begin Page Content -->
-                <div id="page-content-wrapper">
-                    <div class="container">
-                        <div class="card my-5 p-3">
-                            <div class="card-heading ">
-                                <!-- Button trigger modal -->
-                                <h2 class="card-title text-center"> Test Centre</h2>
-                            </div>
-                            <div class="card-body ">
-                                <div class="justify-content-center">
-                                    <div class="col-auto">
-                                        <div class="table-responsive">
+                <div class="container">
 
-                                            <?php
-                                            include "connection.php";
-                                            $query = mysqli_query($connection, "SELECT * from testcentre_table");
-
-                                            ?>
-                                            <table class="table table-hover justify-content-center mx-auto border">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Test Centre ID</th>
-                                                        <th>Test Centre Name</th>
-                                                        <th class="col-md-80"></th>
-                                                    </tr>
-                                                </thead>
-
-                                                <?php
-                                                while ($data = mysqli_fetch_assoc($query)) {
-                                                ?>
-
-                                                    <tbody>
-                                                        <tr>
-                                                            <th scope="row"><?php echo $data["id"]; ?></th>
-                                                            <td><?php echo $data["testcentre_name"]; ?></td>
-                                                            <td class="d-flex"><a href="tcm_edit_testcentre.php?id=<?= $data['id']; ?>" class="btn btn-sm btn-primary mr-1">Edit</a><a href="delete_data.php?id=<?= $data['id']; ?>&table=testcentre_table" class="btn btn-sm btn-danger">Delete</a></td>
-                                                        </tr>
-
-                                                    </tbody>
-                                                <?php
-                                                    $data++;
-                                                }
-                                                ?>
-
-                                            </table>
+                    <div class="card o-hidden border-0 shadow-lg my-5 col-lg-7 mx-auto">
+                        <div class="card-body p-0">
+                            <!-- Nested Row within Card Body -->
+                            <div class="row">
+                                <div class="col-lg">
+                                    <div class="p-5">
+                                        <div class="text-center">
+                                            <h1 class="h4 text-gray-900 mb-4">Record Patient Test</h1>
+                                            <hr>
                                         </div>
-                                        <nav aria-label="...">
-                                            <div class="col text-center"><a href="tcm_add_testcentre.php" class="btn btn-primary mb-4 mx-7 ">Register Test Centre</a></div>
+                                        <form class="user" method="post" action="query_newtest.php">
+                                            <div class="form-group">
+                                                <label for="test_centre">Patient Name</label>
+                                                <select class="form-control" id="exampleFormControlSelect1" name="user_id">
+                                                    <?php foreach ($row as $r) : ?>
+                                                        <option value="<?= $r['id']; ?>"><?= $r['fullname']; ?></option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="form-group">
+                                                    <input type="text" class="form-control form-control-user" name="symptoms" placeholder="Symptoms" required>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="form-group">
+                                                    <label for="test_centre">Test Date</label>
+                                                    <input type='date' class="form-control form-control-user" name="test_date" value='<?php echo date('Y-m-d'); ?>'>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="test_centre">Patient Type</label>
+                                                <select class="form-control" id="exampleFormControlSelect1" name="patient_type">
+                                                    <option value="Returnee">Returnee</option>
+                                                    <option value="Quarantined">Quarantined</option>
+                                                    <option value="Close Contact">Close Contact</option>
+                                                    <option value="Infected">Infected</option>
+                                                    <option value="Suspected">Suspected</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="tcm_testercentre">Test Kit</label>
+                                                <select class="form-control" id="exampleFormControlSelect1" name="testkit_name">
+                                                    <?php foreach ($row2 as $r2) : ?>
+                                                        <option value="<?= $r2['testkit_name']; ?>"><?= $r2['testkit_name']; ?></option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            </div>
 
-                                        </nav>
+                                            <hr>
+                                            <?php  ?>
+                                            <button type="submit" class="btn btn-outline-success btn-user btn-block">
+                                                Record Test
+                                            </button>
+                                        </form>
+                                        <?php if (count($_POST) > 0) echo "Form Submitted!"; ?>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
+                <?php ?>
                 <!-- End of Main Content -->
                 <!-- Footer -->
                 <footer class="sticky-footer bg-white">
